@@ -59,6 +59,28 @@ def encrypt(text, key):
             
     return encrypted_text
 
+
+def decrypt_to_encrypt(key):
+    new_key = ""
+    alpha = "abcdefghijklmnopqrstuvwxyz"
+    for char in key:
+        if char.lower() in alpha:
+            char_index = alpha.index(char.lower())
+            new_index = (26 - char_index) % 26
+            new_char = alpha[new_index]
+            
+            # keep uppercase
+            if char.isupper():
+                new_key += new_char.upper()
+            else:
+                new_key += new_char
+        else:
+            # Keep other chars unchanged
+            new_key += char
+    
+    return new_key
+    
+    
 if __name__=="__main__":
     operations, text = get_input()
     #print(f"test: operations = {operations}, plaintext = {text}\n")
@@ -69,5 +91,7 @@ if __name__=="__main__":
             text = encrypt(text, operation[1])
             #print(f"test: text = {text}\n")
         else:
-            raise ValueError("Expected encryption")
+            #convert key from d to e
+            key = decrypt_to_encrypt(operation[1])
+            text = encrypt(text, key)
     print(text)
