@@ -3,11 +3,7 @@ import numpy as np
 import math
 
 def most_common_each_row(row):
-    max_index = np.argmax(row)
-    key_shift = (max_index - 4) % 26
-    key_letter = chr(key_shift + ord('a'))
-    
-    return key_letter
+    pass
 
 def find_hidden_key(best_key_len, text):
     groups = np.zeros((best_key_len, 26), dtype=int)
