@@ -32,17 +32,14 @@ def shift_to_mapping(shift:int):
     alpha = "abcdefghijklmnopqrstuvwxyz"
     mapping = {}
     
-    #find mapping    
     for i, char in enumerate(alpha):
-        # Shift the index, wrap around using modulo
         new_index = (i + shift) % 26
         mapping[char] = alpha[new_index]
-        # Also handle uppercase
         mapping[char.upper()] = alpha[new_index].upper()
     
     return mapping
 
-    
+
 def create_direct_mapping(mapping_str):
     alpha = "abcdefghijklmnopqrstuvwxyz"
     mapping = {}
@@ -51,7 +48,7 @@ def create_direct_mapping(mapping_str):
         mapping[char] = mapping_str[i]
         mapping[char.upper()] = mapping_str[i].upper()
     
-    return mapping    
+    return mapping
 
 
 def parse_operations(line):
@@ -63,42 +60,19 @@ def parse_operations(line):
         op_type = tokens[i]  # 'e' or 'd'
         param = tokens[i + 1]  # either a number or mapping string
         
-        # Check if it's a shift (number) or mapping (string)
         try:
             shift_value = int(param)
             operations.append((op_type, 'shift', shift_value))
             i += 2
         except ValueError:
-            # It's a mapping string
             operations.append((op_type, 'mapping', param))
             i += 2
     
-    return operations # list of tuples
+    return operations  # list of tuples
 
 
 def invert_mapping(mapping_dict):
-    return {v: k for k, v in mapping_dict.items()}    
-
-def shift(n, text):
-    alpha = "abcdefghijklmnopqrstuvwxyz"
-    new_text = ""
-    
-    for char in text:
-        if char.lower() in alpha:
-            char_index = alpha.index(char.lower())
-            new_index = (char_index + n) % 26
-            new_char = alpha[new_index]
-            
-            # keep uppercase
-            if char.isupper():
-                new_text += new_char.upper()
-            else:
-                new_text += new_char
-        else:
-            # Keep other chars unchanged
-            new_text += char
-    
-    return new_text
+    return {v: k for k, v in mapping_dict.items()}
 
 
 def compbine_maps(map1, map2):
@@ -108,59 +82,33 @@ def compbine_maps(map1, map2):
         step = map1[char]
         step = map2[step]
         final_map[char] = step
+        final_map[char.upper()] = step.upper()
     return final_map
+
 
 if __name__ == "__main__":
     operations, text = get_input()
     parsed_operations = parse_operations(operations)
-    last_action = ''
-    running_shift = 0
-    running_map = {}
     alpha = 'abcdefghijklmnopqrstuvwxyz'
-    
-    for char in alpha:
-        running_map[char ]= char
-    
+
+    # Start with identity map
+    running_map = {char: char for char in alpha}
+
     for op in parsed_operations:
-        # convert to encrypt mapping
         op_type = op[0]
         op_mode = op[1]
-        
-        if last_action == 'shift' and op_mode == 'mapping':
-            text = shift(running_shift, text)
-            running_shift = 0
-            
-        if last_action == 'mapping' and op_mode == 'shift':
-            text = mapping(running_map, text)
-            running_map = {}
-            for char in alpha:
-                running_map[char ]= char
         param = op[2]
-        
-        # shift to mapping
+
         if op_mode == 'shift':
             if op_type == 'e':
-                running_shift += param
-                running_shift = running_shift % 26
+                new_map = shift_to_mapping(param)
+            else:  # 'd'
+                new_map = shift_to_mapping(-param % 26)
+        else:  # 'mapping'
+            new_map = create_direct_mapping(param)
             if op_type == 'd':
-                running_shift -= param
-                running_shift = running_shift % 26
-            last_action = 'shift'
-        
-        else:
-            param = create_direct_mapping(param)
-            if op_type == 'd':
-                param = invert_mapping(param)
-            running_map = compbine_maps(running_map, param)
-            last_action = 'mapping'
-            
-    
-    if op_mode == 'mapping':
-        text = mapping(running_map, text)
-            
-    if op_mode == 'shift':
-        text = shift(running_shift, text)
-        
-    print(text)
-        
-    
+                new_map = invert_mapping(new_map)
+
+        running_map = compbine_maps(running_map, new_map)
+
+    print(mapping(running_map, text))
