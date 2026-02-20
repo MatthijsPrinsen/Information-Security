@@ -1,19 +1,35 @@
 import sys
-import numpy as np
 import math
 
 def most_common_each_row(row):
-    pass
+    """
+    Find the most common letter in the row, which corresponds to the key letter for that position.
+    """
+    max_index = 0 
+    max_val = 0 
+    for i in range(26):
+        if row[i] > max_val:
+            max_val = row[i]
+            max_index = i
+
+    key_shift = (max_index - 4) % 26
+    key_letter = chr(key_shift + ord('a'))
+    
+    return key_letter
 
 def find_hidden_key(best_key_len, text):
-    groups = np.zeros((best_key_len, 26), dtype=int)
+    """
+    Frequency of each letter a certain index.
+    """
+    groups = [[0]*26 for _ in range(best_key_len)]
 
     pos = 0
-    #frequency of each letter a certain index.
     for i in text:
-        group = pos % best_key_len
-        groups[group][ord(i)-ord('a')] += 1
-        pos += 1
+        if i.isalpha():
+            i = i.lower()
+            group = pos % best_key_len
+            groups[group][ord(i)-ord('a')] += 1
+            pos += 1
 
     word = []
     
@@ -21,17 +37,29 @@ def find_hidden_key(best_key_len, text):
         letter = most_common_each_row(i)
         word.append(letter)
 
-    clean_word = ''.join(word)
-    print(clean_word)
+    return ''.join(word)
+    
 
 
 def row_std(row):
-    mean = sum(row) / 26
-    var = sum((x - mean)**2 for x in row) / 26
-    return math.sqrt(var)
+    """
+    Calculate the standard deviation of the frequencies in the row.
+    """
+    x_sqr = 0
+    x_sum = 0
+    for i in range(26):
+        x = row[i]
+        x_sqr += x**2
+        x_sum += x
+    
+    std = math.sqrt((x_sqr/26) - (x_sum/26)**2)
+    return std
 
 
 def singular_row_std(group):
+    """
+    Calculate the sum of the standard deviations for each row in the group.
+    """
     total = 0.0
     for row in group:
         total += row_std(row)
@@ -47,20 +75,15 @@ def get_key_length(key_len:int, string:str):
 
     Tested and working correctly. 
     """
-    # Remove special characters
     text = [i.lower() for i in string if i.isalpha()]
-
-    # create 26 letter list for each letter and for each key length. 
-    groups = np.zeros((key_len, 26), dtype=int)
+    groups = [[0]*26 for _ in range(key_len)]
 
     pos = 0
-    #frequency of each letter a certain index.
     for i in text:
         group = pos % key_len
         groups[group][ord(i)-ord('a')] += 1
         pos += 1
 
-    #Groups by the key length of the frequency of letters occuring there. 
     return groups
 
 
@@ -68,25 +91,25 @@ def main():
     lines = sys.stdin.read().strip().split('\n')
     min_val = int(lines[0])
     max_val = int(lines[1])
-    text = ''.join(lines[2:])  # Join ALL remaining lines
+    text = ''.join(lines[2:])  
 
     best_std = 0
     best_key = min_val
 
     for k in range(min_val, max_val + 1):
-        print(f"Key length: {k}")
         groups = get_key_length(k, text)
         avg_std = singular_row_std(groups)
-        print(f"Sum of {k} std. devs: {avg_std:.2f}")
+        print(f"The sum of {k} std. devs: {avg_std:.2f}")
 
         #find the best
         if avg_std > best_std:
             best_std = avg_std
             best_key = k
 
-    print(best_key)
-    find_hidden_key(best_key, text)
-
+    print('')
+    print("Key guess:")
+    hidden_key =find_hidden_key(best_key, text)
+    print(hidden_key)
     
 
 if __name__ == "__main__":
