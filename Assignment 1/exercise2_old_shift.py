@@ -2,7 +2,6 @@
 Applies a sequence of shift/substitution cipher operations to plaintext,
 composing them into a single mapping before applying.
 """
-
 import sys
 
 
@@ -92,9 +91,6 @@ def parse_operations(line):
 
 
 def invert_mapping(mapping_dict):
-    """
-    Swaps keys and values in a mapping dict for decryption.
-    """
     return {v: k for k, v in mapping_dict.items()}
 
 
@@ -108,6 +104,7 @@ def compbine_maps(map1, map2):
         step = map1[char]
         step = map2[step]
         final_map[char] = step
+        final_map[char.upper()] = step.upper()
     return final_map
 
 

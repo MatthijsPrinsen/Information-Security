@@ -1,7 +1,13 @@
+"""
+Applies a sequence of Vigenere cipher encrypt/decrypt operations to plaintext.
+"""
 import sys
 
 
 def get_input():
+    """
+    Reads operations line and plaintext from stdin.
+    """
     # Read first line (operations)
     operations_line = input()
  
@@ -16,6 +22,9 @@ def get_input():
 
 
 def parse_operations(line):
+    """
+    Parses the operations line into a list of (op_type, key) tuples.
+    """
     tokens = line.split()
     operations = []
     
@@ -30,14 +39,15 @@ def parse_operations(line):
 
 
 def encrypt(text, key):
+    """
+    Encrypts text using a Vigenere cipher with the given key.
+    """
     alpha = "abcdefghijklmnopqrstuvwxyz"
     encrypted_text = ""    
     i = 0
     key_len = len(key)
     for char in text:
-        #print(f"test: char = {char}")
         if char.lower() in alpha:
-            #print(f"char '{char}' in alpha")
             char_idx = alpha.index(char.lower())
             
             key_char = key[i % key_len] 
@@ -61,6 +71,9 @@ def encrypt(text, key):
 
 
 def decrypt_to_encrypt(key):
+    """
+    Converts a decryption key into its equivalent encryption key.
+    """
     new_key = ""
     alpha = "abcdefghijklmnopqrstuvwxyz"
     for char in key:

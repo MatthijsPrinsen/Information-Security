@@ -128,15 +128,27 @@ def shift_to_mapping(shift:int):
 if __name__ == "__main__":
     operations, text = get_input()
     parsed_operations = parse_operations(operations)
-    final_shift = 0
-    final_mapping = {}
-    alpha = "abcdefghijklmnopqrstuvwxyz"
+    last_action = ''
+    running_shift = 0
+    running_map = {}
+    alpha = 'abcdefghijklmnopqrstuvwxyz'
+    
     for char in alpha:
-        final_mapping[char] = char 
+        running_map[char ]= char
     
     for op in parsed_operations:
         op_type = op[0]
         op_mode = op[1]
+        
+        if last_action == 'shift' and op_mode == 'mapping':
+            text = shift(running_shift, text)
+            running_shift = 0
+            
+        if last_action == 'mapping' and op_mode == 'shift':
+            text = mapping(running_map, text)
+            running_map = {}
+            for char in alpha:
+                running_map[char ]= char
         param = op[2]
         
         #combine shifts
@@ -155,6 +167,12 @@ if __name__ == "__main__":
     #run operation
     text = mapping(final_mapping, text)
     
+    if op_mode == 'mapping':
+        text = mapping(running_map, text)
+            
+    if op_mode == 'shift':
+        text = shift(running_shift, text)
+        
     print(text)
         
     
