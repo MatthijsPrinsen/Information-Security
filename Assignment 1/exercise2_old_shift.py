@@ -1,7 +1,14 @@
+"""
+Applies a sequence of shift/substitution cipher operations to plaintext,
+composing them into a single mapping before applying.
+"""
 import sys
 
 
 def get_input():
+    """
+    Reads operations line and plaintext from stdin.
+    """
     # Read first line (operations)
     operations_line = input()
     
@@ -16,6 +23,9 @@ def get_input():
 
 
 def mapping(mapping:dict, plaintext:str):
+    """
+    Applies a substitution mapping to plaintext, non-mapped chars pass through.
+    """
     result = []
     
     for char in plaintext:
@@ -29,6 +39,9 @@ def mapping(mapping:dict, plaintext:str):
 
 
 def shift_to_mapping(shift:int):
+    """
+    Converts an integer shift into a substitution mapping dict.
+    """
     alpha = "abcdefghijklmnopqrstuvwxyz"
     mapping = {}
     
@@ -41,6 +54,9 @@ def shift_to_mapping(shift:int):
 
 
 def create_direct_mapping(mapping_str):
+    """
+    Converts a 26-char mapping string into a substitution mapping dict.
+    """
     alpha = "abcdefghijklmnopqrstuvwxyz"
     mapping = {}
     
@@ -52,6 +68,9 @@ def create_direct_mapping(mapping_str):
 
 
 def parse_operations(line):
+    """
+    Parses the operations line into a list of (op_type, op_mode, param) tuples.
+    """
     tokens = line.split()
     operations = []
     
@@ -76,6 +95,9 @@ def invert_mapping(mapping_dict):
 
 
 def compbine_maps(map1, map2):
+    """
+    Composes two mappings into one by chaining map1 then map2.
+    """
     alpha = 'abcdefghijklmnopqrstuvwxyz'
     final_map = {}
     for char in alpha:
