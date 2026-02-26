@@ -21,6 +21,8 @@ def mapping(mapping:dict, plaintext:str):
     for char in plaintext:
         if char in mapping:
             result.append(mapping[char])
+        elif char.lower() in mapping:
+            result.append(mapping[char.lower()].upper())
         else:
             # Not a letter - keep unchanged
             result.append(char)
@@ -49,7 +51,6 @@ def create_direct_mapping(mapping_str):
     
     for i, char in enumerate(alpha):
         mapping[char] = mapping_str[i]
-        mapping[char.upper()] = mapping_str[i].upper()
     
     return mapping    
 
@@ -100,26 +101,78 @@ def shift(n, text):
     
     return new_text
 
+
+def combine_mappings(map1, map2):
+    alpha = "abcdefghijklmnopqrstuvwxyz"
+    final_mapping = {}
+    for char in alpha:
+        step = map1[char]
+        step = map2[step]
+        final_mapping[char] = step
+    return final_mapping
+
+
+def shift_to_mapping(shift:int):
+    alpha = "abcdefghijklmnopqrstuvwxyz"
+    mapping = {}
+    
+    #find mapping    
+    for i, char in enumerate(alpha):
+        # Shift the index, wrap around using modulo
+        new_index = (i + shift) % 26
+        mapping[char] = alpha[new_index]
+    
+    return mapping
+
+
 if __name__ == "__main__":
     operations, text = get_input()
     parsed_operations = parse_operations(operations)
+    last_action = ''
+    running_shift = 0
+    running_map = {}
+    alpha = 'abcdefghijklmnopqrstuvwxyz'
+    
+    for char in alpha:
+        running_map[char ]= char
+    
     for op in parsed_operations:
-        # convert to encrypt mapping
         op_type = op[0]
         op_mode = op[1]
+        
+        if last_action == 'shift' and op_mode == 'mapping':
+            text = shift(running_shift, text)
+            running_shift = 0
+            
+        if last_action == 'mapping' and op_mode == 'shift':
+            text = mapping(running_map, text)
+            running_map = {}
+            for char in alpha:
+                running_map[char ]= char
         param = op[2]
         
-        # shift to mapping
+        #combine shifts
         if op_mode == 'shift':
-            if op_type == 'd':
-                param = 26 - param
-            text = shift(param, text)
-        else:
+            param = shift_to_mapping(param)
+        #combine mappings
+        if op_mode == 'mapping':
             param = create_direct_mapping(param)
-            if op_type == 'd':
-                param = invert_mapping(param)
-            text = mapping(param, text)
+        if op_type == 'd':
+            param = invert_mapping(param)
+            
+        final_mapping = combine_mappings(param, final_mapping)
+        
+    final_shift = final_shift % 26
     
+    #run operation
+    text = mapping(final_mapping, text)
+    
+    if op_mode == 'mapping':
+        text = mapping(running_map, text)
+            
+    if op_mode == 'shift':
+        text = shift(running_shift, text)
+        
     print(text)
         
     
