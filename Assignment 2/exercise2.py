@@ -67,3 +67,4 @@ if __name__ == "__main__":
     S = init_lookup_table(key_bytes)
     c = PRGA(S, data_bytes)
     sys.stdout.buffer.write(bytes(c))
+    #print(f"Key bytes: {len(key_bytes)}, Data bytes: {len(data_bytes)}", file=sys.stderr)
