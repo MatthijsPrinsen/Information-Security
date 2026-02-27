@@ -15,18 +15,16 @@ def get_input():
     Reads stdin as binary, splitting on 0xFF into key bytes and data bytes.
     """
     bytes_obj = sys.stdin.buffer.read()
-    key = True
     key_bytes = []
     data_bytes = []
-    for char in bytes_obj:
-        if char == 0xFF:
-            key = False
-            continue
-        if key == True:
-            key_bytes.append(char)
-        else:
-            data_bytes.append(char)
-    #print(f"Key bytes: {len(key_bytes)}, Data bytes: {len(data_bytes)}", file=sys.stderr)
+    
+    first_ff = bytes_obj.index(0xFF)
+    
+    for char in bytes_obj[:first_ff]:
+        key_bytes.append(char)
+    for char in bytes_obj[first_ff+1:]:
+        data_bytes.append(char)
+
     return key_bytes, data_bytes
         
         
@@ -34,7 +32,7 @@ def vernam(key_bytes, data_bytes):
     """
     XORs each data byte with the corresponding key byte and returns the result.
     """
-    n = len(data_bytes)
+    n = len(key_bytes)
     c = []
     for i in range(n):
         key_byte = key_bytes[i]
@@ -47,4 +45,3 @@ if __name__ == "__main__":
     key_bytes, data_bytes = get_input()
     c = vernam(key_bytes=key_bytes, data_bytes=data_bytes)
     sys.stdout.buffer.write(bytes(c))
-    #print("done!", file=sys.stderr)
