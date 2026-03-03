@@ -13,5 +13,13 @@ N.B.: This exercise will feature intermediate values in the range of 1017. Keep 
 import sys
 
 def get_input():
-    pass
+    obj = sys.stdin.buffer.read()
+    mode = str(obj[1])
+    numbers = []
+    for row in obj[1:]:
+        numbers.append(row)
+    return mode, numbers
 
+if __name__ == "__main__":
+    mode, numbers = get_input()
+    print(f"mode: {mode}, numbers: {numbers}")
