@@ -13,13 +13,34 @@ N.B.: This exercise will feature intermediate values in the range of 1017. Keep 
 import sys
 
 def get_input():
-    obj = sys.stdin.buffer.read()
-    mode = str(obj[1])
+    obj = sys.stdin.read().splitlines()
+    mode = str(obj[0])
+    p, q, e = obj[1].split()
+    p, q, e = int(p), int(q), int(e)
     numbers = []
-    for row in obj[1:]:
+    for row in obj[2:]:
         numbers.append(row)
-    return mode, numbers
+    return mode, p, q, e, numbers
+
+
+def key_gen(p, q, e):
+    n = p*q
+    phi = (p-1)*(q-1)
+    d = pow(e, -1, phi) # modular inverse
+    return n, d
+
+
+def rsa(m, exp, n):
+    return pow(m, exp, n)
 
 if __name__ == "__main__":
-    mode, numbers = get_input()
-    print(f"mode: {mode}, numbers: {numbers}")
+    mode, p, q, e, numbers = get_input()
+    n, d = key_gen(p,q,e)
+    
+    if mode == 'e':
+        exp = e
+    else:
+        exp = d
+
+    for num in numbers:
+        print(rsa(int(num), exp, n))
