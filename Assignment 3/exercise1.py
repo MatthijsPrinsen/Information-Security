@@ -10,3 +10,8 @@ Output: The encrypted numbers, separated by newlines
 N.B.: This exercise will feature intermediate values in the range of 1017. Keep this in mind
     when deciding what data types to use
 """
+import sys
+
+def get_input():
+    pass
+
