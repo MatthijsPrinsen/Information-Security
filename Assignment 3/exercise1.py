@@ -23,10 +23,12 @@ def get_input():
     return mode, p, q, e, numbers
 
 
-def key_gen(p, q, e):
+def key_gen(p, q, e, mode):
     n = p*q
+    d = None
     phi = (p-1)*(q-1)
-    d = pow(e, -1, phi) # modular inverse
+    if mode == 'd':
+        d = pow(e, -1, phi) # modular inverse
     return n, d
 
 
@@ -35,7 +37,7 @@ def rsa(m, exp, n):
 
 if __name__ == "__main__":
     mode, p, q, e, numbers = get_input()
-    n, d = key_gen(p,q,e)
+    n, d = key_gen(p,q,e, mode)
     
     if mode == 'e':
         exp = e
