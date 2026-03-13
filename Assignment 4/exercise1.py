@@ -40,8 +40,8 @@ def find_collisions(target_data, divisor, n=2):
         candidate = format(i, f'0{len(target_data)}b')
         if candidate != target_data and crc(candidate, divisor) == target_crc:
             collisions.append(candidate)
-        if len(collisions) == n:
-            break
+        #if len(collisions) == n:
+        #   break
     return collisions
 
 
