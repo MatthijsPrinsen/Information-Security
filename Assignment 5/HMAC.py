@@ -15,9 +15,23 @@ of the file containing the main function should be HMAC.py.
 # constants = opad, ipad
 #  inner hash = ipad, 
 #  outer hash = opad
+#  B = 64
+
+B = 64
+ipad_byte = 0x36
+opad_byte = 0x5c
+ipad = B * ipad_byte
+opad = B * opad_byte
+
 # Input = key, message
 #  The input of the program is given in binary form: first the key, followed by the separator 
 #  byte 0xFF, followed by the message
+
+def get_input():
+    # Read key, message
+    key, message = input()
+    return key, message
+
 # Apply HMAC
 #  import tiger hash
 #   at the key in the HMAC algorithm should be padded with consecutive 0x00 bytes until it has 
